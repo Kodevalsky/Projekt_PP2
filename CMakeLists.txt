@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.20.2)
 project(ProjektPP)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(ProjektPP main.cpp interfejs.cpp)
+add_executable(ProjektPP main.cpp)

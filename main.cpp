@@ -1,7 +1,20 @@
 #include <iostream>
-#include <string.h>
+#include <cstring>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 
 using namespace std;
+
+void wyczyscEkran(){
+    for(int i = 0; i < 100; i++)
+    {
+        cout << "\n";
+    }
+}
 
 struct rekord{
     int indeks;
@@ -23,28 +36,42 @@ struct intNode{
 void wyswietl(intNode * obiekt){
     intNode * temp = obiekt -> pierwszy;
     int i = 0;
+    cout << "Oto lista obecnych w programie próbkek: " << endl;
     while (temp)
     {
-        cout << temp -> zapis.indeks << endl;
-        cout << temp -> zapis.nazwa << endl;
-        cout << temp -> zapis.wlasciciel << endl;
-        cout << temp -> zapis.objetosc << endl;
-        cout << temp -> zapis.rodzPrep << endl;
+        cout << i + 1 << ".   ";
+        cout << temp -> zapis.indeks << "/";
+        for(int g = 0; temp -> zapis.nazwa[g]; g++)
+        {
+            cout << temp -> zapis.nazwa[g];
+        }
+        cout << temp -> zapis.stezenie << "/";
+        cout << temp -> zapis.objetosc << "/";
+        for(int s = 0; temp -> zapis.wlasciciel[s]; s++)
+        {
+            cout << temp -> zapis.wlasciciel[s];
+        }
+        cout << temp -> zapis.dataPobrania << "/";
+        cout << temp -> zapis.dataBadan << "/";
+        cout << temp -> zapis.rodzPrep;
         temp = temp -> nastepny;
         i++;
     }
+    cout.flush();
+    sleep(5);
 }
 
 void pierwszeSlowa(){
-    cout << "Witaj w bazie danych laboratorium SCP, jak? operacje chcesz przeprowadzic? Wpisz cyfr?:" << endl;
+    cout << "Witaj w bazie danych laboratorium SCP, jak? operacje chcesz przeprowadzic? Wpisz cyfre:" << endl;
     cout << "1 - Dodaj probke do bazy danych." << endl;
     cout << "2 - Usun probke z dazy danych." << endl;
     cout << "3 - Zmien dane probki." << endl;
     cout << "4 - Wyszukaj probke po nazwie." << endl;
     cout << "5 - Zapisz baze na dysku" << endl;
     cout << "6 - Wczytaj baze z dysku" << endl;
-    cout << "7 - Wyjdz z programu" << endl;
-};
+    cout << "7 - Wyswietl liste probek" << endl;
+    cout << "8 - Wyjdz z programu" << endl;
+}
 
 void usun(intNode * obiekt, int nr){
     if(nr == 0)
@@ -71,11 +98,10 @@ void usun(intNode * obiekt, int nr){
         {
             cout << "Usuwanie rejestru..." << endl;
         }
-        if (temp -> nastepny = 0)
+        if (temp -> nastepny = nullptr)
         {
            delete temp -> nastepny;
-           temp -> nastepny = 0;
-           obiekt = temp;
+           temp -> nastepny = nullptr;
         }
     }
 
@@ -89,12 +115,9 @@ void dodaj(intNode * obiekt){
     cin >> a;
     nowy -> zapis.indeks = a;
     string c;
-    int i = 0;
     cout << endl << "Wprowadz nazwe preparatu" << endl;
-    cin.ignore(INT_MAX, '\n');
+    cin.ignore();
     getline(cin, c);
-    int n = c.length();
-    char char_array[n + 1];
     strcpy(nowy -> zapis.nazwa, c.c_str());
     cout << endl << "Wprowadz stezenie preparatu" << endl;
     cin >> a;
@@ -102,9 +125,8 @@ void dodaj(intNode * obiekt){
     cout << endl << "Wprowadz objetosc preparatu" << endl;
     cin >> a;
     nowy -> zapis.objetosc = a;
-    i = 0;
     cout << endl << "Wprowadz wlasciciela preparatu" << endl;
-    cin.ignore(INT_MAX, '\n');
+    cin.ignore();
     getline(cin, c);
     strcpy(nowy -> zapis.wlasciciel, c.c_str());
     string b;
@@ -117,9 +139,9 @@ void dodaj(intNode * obiekt){
     cout << endl << "Wprowadz rodzaj preparatu" << endl;
     cin >> b;
     nowy -> zapis.rodzPrep = b;
-    if(obiekt -> pierwszy == 0){
+    if(obiekt -> pierwszy == nullptr){
         obiekt -> pierwszy = nowy;
-        obiekt -> nastepny = 0;
+        obiekt -> nastepny = nullptr;
     }
     else
     {
@@ -129,34 +151,118 @@ void dodaj(intNode * obiekt){
             temp = temp -> nastepny;
         }
         temp -> nastepny = nowy;
-        nowy -> nastepny = 0;
-        obiekt = temp;
+        nowy -> nastepny = nullptr;
     }
+}
+
+void update(intNode * mainStruct)
+{
+    int probkaNumer;
+    cout << "Podaj numer probki, ktorej parametr chcesz zmodyfikowac." << endl;
+    cin >> probkaNumer;
+    intNode * temp;
+    temp = mainStruct -> pierwszy;
+    for (int f = probkaNumer; f != 1; f--)
+    {
+        temp = temp -> nastepny;
+    }
+    cout << "Ktory parametr probki chcesz zmienic?";
+    cout << "Kliknij:" << endl << "1 - aby zmienic indeks"
+    << "2 - aby zmienic nazwe" << endl
+    << "3 - aby zmienic stezenie" << endl
+    << "4 - aby zmienic objetosc" << endl
+    << "5 - aby zmienic wlasciciela" << endl
+    << "6 - aby zmienic date pobrania" << endl
+    << "7 - aby zmienic date badan" << endl
+    << "8 - aby zmienic rodzaj preparatu" << endl;
+    int choice;
+    cin >> choice;
+    cout << endl << "Wprowadz nowa wartosc:" << endl;
+    float a;
+    string c;
+    switch(choice)
+    {
+        case 1:
+            cin >> a;
+            temp -> zapis.indeks = a;
+            break;
+        case 2:
+            cin.ignore();
+            getline(cin, c);
+            strcpy(temp -> zapis.nazwa, c.c_str());
+            break;
+        case 3:
+            cin >> a;
+            temp -> zapis.stezenie = a;
+            break;
+        case 4:
+            cin >> a;
+            temp -> zapis.objetosc = a;
+            break;
+        case 5:
+            cin.ignore();
+            getline(cin, c);
+            strcpy(temp -> zapis.wlasciciel, c.c_str());
+            break;
+        case 6:
+            cin >> c;
+            temp -> zapis.dataPobrania = c;
+            break;
+        case 7:
+            cin >> c;
+            temp -> zapis.dataBadan = c;
+            break;
+        case 8:
+            cin >> c;
+            temp -> zapis.rodzPrep = c;
+            break;
+    }
+    cout << endl;
+    wyswietl(mainStruct);
+    wyczyscEkran();
+}
+
+int wyszukaj(intNode * mainStruct)
+{
+    cout << "Wprowadz prosze nazwe probki ktora proboujesz wyszukac..." << endl;
+    string search;
+    char searchTable[256];
+    getline(cin, search);
+    strcpy(searchTable, search.c_str());
+    bool foundVar = false;
+    while()
+
 }
 
 int main() {
     intNode * lista;
     lista = new intNode;
-    lista -> nastepny = 0;
+    lista -> nastepny = nullptr;
     lista -> pierwszy = 0;
-    pierwszeSlowa();
     int wybor;
     while(wybor != 7)
     {
+        pierwszeSlowa();
         cin >> wybor;
         switch(wybor)
         {
             case 1:
+                wyczyscEkran();
                 dodaj(lista);
+                wyczyscEkran();
                 wyswietl(lista);
+                wyczyscEkran();
                 break;
             case 2:
+                wyczyscEkran();
                 int input;
-                cout << "Ktory rejestr z listy chcesz usunac?";
+                cout << "Ktory rejestr z listy chcesz usunac?" << endl;
                 cin >> input;
-                usun(lista, input);
+                usun(lista, input - 1);
                 break;
             case 3:
+                wyczyscEkran();
+                update(lista);
                 break;
             case 4:
                 break;
@@ -165,6 +271,7 @@ int main() {
             case 6:
                 break;
         }
+
     }
     return 0;
 }
