@@ -6,7 +6,6 @@
 #include <unistd.h>
 #endif
 
-
 using namespace std;
 
 void wyczyscEkran(){
@@ -33,7 +32,7 @@ struct intNode{
     intNode * nastepny;
 };
 
-void wyswietl(intNode * obiekt){
+void wyswietlCalosc(intNode * obiekt){
     intNode * temp = obiekt -> pierwszy;
     int i = 0;
     cout << "Oto lista obecnych w programie próbkek: " << endl;
@@ -45,7 +44,7 @@ void wyswietl(intNode * obiekt){
         {
             cout << temp -> zapis.nazwa[g];
         }
-        cout << temp -> zapis.stezenie << "/";
+        cout << "/" << temp -> zapis.stezenie << "/";
         cout << temp -> zapis.objetosc << "/";
         for(int s = 0; temp -> zapis.wlasciciel[s]; s++)
         {
@@ -155,6 +154,24 @@ void dodaj(intNode * obiekt){
     }
 }
 
+void wyswietlJeden(intNode * temp)
+{
+    cout << temp -> zapis.indeks << "/";
+    for(int g = 0; temp -> zapis.nazwa[g]; g++)
+    {
+        cout << temp -> zapis.nazwa[g];
+    }
+    cout << "/" << temp -> zapis.stezenie << "/";
+    cout << temp -> zapis.objetosc << "/";
+    for(int s = 0; temp -> zapis.wlasciciel[s]; s++)
+    {
+        cout << temp -> zapis.wlasciciel[s];
+    }
+    cout << temp -> zapis.dataPobrania << "/";
+    cout << temp -> zapis.dataBadan << "/";
+    cout << temp -> zapis.rodzPrep << endl;
+}
+
 void update(intNode * mainStruct)
 {
     int probkaNumer;
@@ -218,20 +235,49 @@ void update(intNode * mainStruct)
             break;
     }
     cout << endl;
-    wyswietl(mainStruct);
+    wyswietlCalosc(mainStruct);
     wyczyscEkran();
 }
 
-int wyszukaj(intNode * mainStruct)
+bool checkTable(intNode * rekord, char searchTable[256])
 {
-    cout << "Wprowadz prosze nazwe probki ktora proboujesz wyszukac..." << endl;
+    bool foundVar = true;
+    for(int m = 0; m < 256; m++)
+    {
+        if (rekord -> zapis.nazwa[m] != searchTable[m] && rekord -> nastepny == nullptr)
+        {
+            foundVar = false;
+            break;
+        }
+        else if (rekord -> zapis.nazwa[m] != searchTable[m])
+        {
+            rekord = rekord->nastepny;
+            m = -1;
+        }
+    }
+    return foundVar;
+}
+
+intNode * wyszukaj(intNode * mainStruct)
+{
+    cout << "Wprowadz prosze nazwe probki ktora probujesz wyszukac..." << endl;
     string search;
     char searchTable[256];
+    cin.ignore();
     getline(cin, search);
     strcpy(searchTable, search.c_str());
-    bool foundVar = false;
-    while()
-
+    intNode * temp = mainStruct -> pierwszy;
+    bool foundVar = checkTable(temp, searchTable);
+    if (foundVar == false)
+    {
+        cout << "Nie znaleziono probki o podanej nazwie" << endl;
+        return nullptr;
+    }
+    else
+    {
+        cout << "Znaleziono nastepujaca probke o podanej nazwie: " << endl;
+        return temp;
+    }
 }
 
 int main() {
@@ -250,7 +296,7 @@ int main() {
                 wyczyscEkran();
                 dodaj(lista);
                 wyczyscEkran();
-                wyswietl(lista);
+                wyswietlCalosc(lista);
                 wyczyscEkran();
                 break;
             case 2:
@@ -265,6 +311,7 @@ int main() {
                 update(lista);
                 break;
             case 4:
+                wyswietlJeden(wyszukaj(lista));
                 break;
             case 5:
                 break;
