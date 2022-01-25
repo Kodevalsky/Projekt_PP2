@@ -108,22 +108,66 @@ void usun(intNode * obiekt, int nr){
 
 }
 
+bool checkTable(intNode * rekord, char searchTable[256])
+{
+    bool foundVar = true;
+    if(rekord == nullptr)
+    {
+        return false;
+    }
+    else
+    {
+        for (int m = 0; m < 256 && rekord->zapis.nazwa[m] != 0; m++) {
+            if (rekord->zapis.nazwa[m] != searchTable[m] && rekord->nastepny == nullptr) {
+                foundVar = false;
+                break;
+            } else if (rekord->zapis.nazwa[m] != searchTable[m]) {
+                rekord = rekord->nastepny;
+                m = -1;
+            }
+        }
+        return foundVar;
+    }
+}
+
 void dodaj(intNode * obiekt){
     intNode * nowy = new intNode;
     float a;
+    char checkValidityTable[256];
     cout << "Podaj indeks:" << endl;
     cin >> a;
     nowy -> zapis.indeks = a;
     string c;
     cout << endl << "Wprowadz nazwe preparatu" << endl;
     cin.ignore();
+    here:
     getline(cin, c);
+    strcpy(checkValidityTable, c.c_str());
+    intNode * vad = obiekt -> pierwszy;
+    if (checkTable(vad, checkValidityTable))
+    {
+        wyczyscEkran();
+        cout << "Wprowadzona nazwa nie jest unikalna, wprowadz inna nazwe..." << endl;
+        goto here;
+    }
     strcpy(nowy -> zapis.nazwa, c.c_str());
     cout << endl << "Wprowadz stezenie preparatu" << endl;
     cin >> a;
+    while(a <= 0){
+        cout.flush();
+        wyczyscEkran();
+        cout << "Wprowadzono nieprawidlowa wartosc, wartosc musi byc wieksza od 0" << endl;
+        cin >> a;
+    }
     nowy -> zapis.stezenie = a;
     cout << endl << "Wprowadz objetosc preparatu" << endl;
     cin >> a;
+    while(a <= 0){
+        cout.flush();
+        wyczyscEkran();
+        cout << "Wprowadzono nieprawidlowa wartosc, wartosc musi byc wieksza od 0" << endl;
+        cin >> a;
+    }
     nowy -> zapis.objetosc = a;
     cout << endl << "Wprowadz wlasciciela preparatu" << endl;
     cin.ignore();
@@ -136,9 +180,27 @@ void dodaj(intNode * obiekt){
     cout << endl << "Wprowadz date badan preparatu" << endl;
     cin >> b;
     nowy -> zapis.dataBadan = b;
-    cout << endl << "Wprowadz rodzaj preparatu" << endl;
-    cin >> b;
-    nowy -> zapis.rodzPrep = b;
+    cout << endl << "Wybierz rodzaj preparatu poprzez wybranie odpowiedniego numru:" << endl << "1 - staly" << endl << "2 - rozproszony" << endl << "3 - lotny";
+    int k;
+    cin >> k;
+    tu:
+    switch(k)
+    {
+        case 1:
+            nowy -> zapis.rodzPrep = "staly";
+            break;
+        case 2:
+            nowy -> zapis.rodzPrep = "rozproszony";
+            break;
+        case 3:
+            nowy -> zapis.rodzPrep = "lotny";
+            break;
+        default:
+            wyczyscEkran();
+            cout << "Wprowadzono nieprawidłową wartość! Wybierz cyfrę 1, 2 lub 3";
+            cin >> k;
+            goto tu;
+    }
     if(obiekt -> pierwszy == nullptr){
         obiekt -> pierwszy = nowy;
         obiekt -> nastepny = nullptr;
@@ -242,24 +304,7 @@ void update(intNode * mainStruct)
     wyczyscEkran();
 }
 
-bool checkTable(intNode * rekord, char searchTable[256])
-{
-    bool foundVar = true;
-    for(int m = 0; m < 256 && rekord -> zapis.nazwa[m] != 0; m++)
-    {
-        if (rekord -> zapis.nazwa[m] != searchTable[m] && rekord -> nastepny == nullptr)
-        {
-            foundVar = false;
-            break;
-        }
-        else if (rekord -> zapis.nazwa[m] != searchTable[m])
-        {
-            rekord = rekord->nastepny;
-            m = -1;
-        }
-    }
-    return foundVar;
-}
+
 
 intNode * wyszukaj(intNode * mainStruct)
 {
@@ -271,7 +316,7 @@ intNode * wyszukaj(intNode * mainStruct)
     strcpy(searchTable, search.c_str());
     intNode * temp = mainStruct -> pierwszy;
     bool foundVar = checkTable(temp, searchTable);
-    if (foundVar == false)
+    if (!foundVar)
     {
         cout << "Nie znaleziono probki o podanej nazwie" << endl;
         return nullptr;
@@ -309,11 +354,22 @@ void zapisDanych(intNode * obiekt)
     baza.close();
 }
 
+void loadDatabase()
+{
+    cout << "Podaj nazwę pliku do wczytania (wraz z rozszerzeniem .txt)" << endl;
+    string f;
+    cin.ignore();
+    cin >> f;
+    ifstream baza;
+    baza.open(f, ios::app);
+   // getline()
+}
+
 int main() {
     intNode * lista;
     lista = new intNode;
     lista -> nastepny = nullptr;
-    lista -> pierwszy = 0;
+    lista -> pierwszy = nullptr;
     int wybor;
     while(wybor != 7)
     {
@@ -344,8 +400,10 @@ int main() {
                 break;
             case 5:
                 zapisDanych(lista);
+                wyczyscEkran();
                 break;
             case 6:
+                loadDatabase();
                 break;
         }
 
