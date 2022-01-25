@@ -170,6 +170,8 @@ void wyswietlJeden(intNode * temp)
     cout << temp -> zapis.dataPobrania << "/";
     cout << temp -> zapis.dataBadan << "/";
     cout << temp -> zapis.rodzPrep << endl;
+    cout.flush();
+    sleep(4);
 }
 
 void update(intNode * mainStruct)
@@ -242,7 +244,7 @@ void update(intNode * mainStruct)
 bool checkTable(intNode * rekord, char searchTable[256])
 {
     bool foundVar = true;
-    for(int m = 0; m < 256; m++)
+    for(int m = 0; m < 256 && rekord -> zapis.nazwa[m] != 0; m++)
     {
         if (rekord -> zapis.nazwa[m] != searchTable[m] && rekord -> nastepny == nullptr)
         {
