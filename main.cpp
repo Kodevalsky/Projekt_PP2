@@ -5,6 +5,7 @@
 #else
 #include <unistd.h>
 #endif
+#include <fstream>
 
 using namespace std;
 
@@ -52,7 +53,7 @@ void wyswietlCalosc(intNode * obiekt){
         }
         cout << temp -> zapis.dataPobrania << "/";
         cout << temp -> zapis.dataBadan << "/";
-        cout << temp -> zapis.rodzPrep;
+        cout << temp -> zapis.rodzPrep << endl;
         temp = temp -> nastepny;
         i++;
     }
@@ -282,6 +283,32 @@ intNode * wyszukaj(intNode * mainStruct)
     }
 }
 
+void zapisDanych(intNode * obiekt)
+{
+    ofstream baza;
+    baza.open("dane.txt", ios::app);
+    intNode * temp = obiekt -> pierwszy;
+    while (temp)
+    {
+        baza << temp -> zapis.indeks << "/";
+        for(int g = 0; temp -> zapis.nazwa[g]; g++)
+        {
+            baza << temp -> zapis.nazwa[g];
+        }
+        baza << "/" << temp -> zapis.stezenie << "/";
+        baza << temp -> zapis.objetosc << "/";
+        for(int s = 0; temp -> zapis.wlasciciel[s]; s++)
+        {
+            baza << temp -> zapis.wlasciciel[s];
+        }
+        baza << temp -> zapis.dataPobrania << "/";
+        baza << temp -> zapis.dataBadan << "/";
+        baza << temp -> zapis.rodzPrep << endl;
+        temp = temp -> nastepny;
+    }
+    baza.close();
+}
+
 int main() {
     intNode * lista;
     lista = new intNode;
@@ -316,6 +343,7 @@ int main() {
                 wyswietlJeden(wyszukaj(lista));
                 break;
             case 5:
+                zapisDanych(lista);
                 break;
             case 6:
                 break;
