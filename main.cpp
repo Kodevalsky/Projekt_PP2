@@ -348,7 +348,7 @@ void zapisDanych(intNode * obiekt)
         }
         baza << temp -> zapis.dataPobrania << "/";
         baza << temp -> zapis.dataBadan << "/";
-        baza << temp -> zapis.rodzPrep << endl;
+        baza << temp -> zapis.rodzPrep << endl; // zeby nie dodawal nowe linii w ostatnim rekordzie
         temp = temp -> nastepny;
     }
     baza.close();
@@ -362,8 +362,8 @@ void loadDatabase(intNode * obiekt) {
     cin >> f;
     fstream baza;
     baza.open(f, ios::in);
-    while(getline(baza, f)) {
-        intNode *nowy = new intNode;
+    while(!baza.eof()) {
+        intNode * nowy = new intNode;
         getline(baza, t, '/');
         nowy->zapis.indeks = stoi(t);
         getline(baza, t, '/');
@@ -387,14 +387,13 @@ void loadDatabase(intNode * obiekt) {
         }
         else
         {
-            intNode *temp = obiekt->pierwszy;
+            intNode * temp = obiekt->pierwszy;
             while (temp->nastepny)
             {
                 temp = temp->nastepny;
             }
             temp->nastepny = nowy;
             nowy->nastepny = nullptr;
-            obiekt = temp;
         }
     }
 }
