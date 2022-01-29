@@ -331,7 +331,7 @@ intNode * wyszukaj(intNode * mainStruct)
 void zapisDanych(intNode * obiekt)
 {
     ofstream baza;
-    baza.open("dane.txt", ios::app);
+    baza.open("dane.txt", ios::out);
     intNode * temp = obiekt -> pierwszy;
     while (temp)
     {
@@ -354,16 +354,53 @@ void zapisDanych(intNode * obiekt)
     baza.close();
 }
 
-void loadDatabase()
-{
+
+void loadDatabase(intNode * obiekt) {
     cout << "Podaj nazwę pliku do wczytania (wraz z rozszerzeniem .txt)" << endl;
-    string f;
+    string f, t;
     cin.ignore();
     cin >> f;
-    ifstream baza;
-    baza.open(f, ios::app);
-   // getline()
+    fstream baza;
+    baza.open(f, ios::in);
+    while(getline(baza, f)) {
+        intNode *nowy = new intNode;
+        getline(baza, t, '/');
+        nowy->zapis.indeks = stoi(t);
+        getline(baza, t, '/');
+        strcpy(nowy->zapis.nazwa, t.c_str());
+        getline(baza, t, '/');
+        nowy->zapis.stezenie = stof(t);
+        getline(baza, t, '/');
+        nowy->zapis.objetosc = stof(t);
+        getline(baza, t, '/');
+        strcpy(nowy->zapis.wlasciciel, t.c_str());
+        getline(baza, t, '/');
+        nowy->zapis.dataPobrania = t;
+        getline(baza, t, '/');
+        nowy->zapis.dataBadan = t;
+        getline(baza, t, '\n');
+        nowy->zapis.rodzPrep = t;
+        if (obiekt->pierwszy == nullptr)
+        {
+            obiekt->pierwszy = nowy;
+            obiekt->nastepny = nullptr;
+        }
+        else
+        {
+            intNode *temp = obiekt->pierwszy;
+            while (temp->nastepny)
+            {
+                temp = temp->nastepny;
+            }
+            temp->nastepny = nowy;
+            nowy->nastepny = nullptr;
+            obiekt = temp;
+        }
+    }
 }
+
+
+
 
 int main() {
     intNode * lista;
@@ -403,10 +440,13 @@ int main() {
                 wyczyscEkran();
                 break;
             case 6:
-                loadDatabase();
+                loadDatabase(lista);
                 break;
+            case 7:
+                wyswietlCalosc(lista);
+                break;
+            case 8:
+                return 0;
         }
-
     }
-    return 0;
 }
