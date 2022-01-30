@@ -51,7 +51,7 @@ void wyswietlCalosc(intNode * obiekt){
         {
             cout << temp -> zapis.wlasciciel[s];
         }
-        cout << temp -> zapis.dataPobrania << "/";
+        cout << "/" << temp -> zapis.dataPobrania << "/";
         cout << temp -> zapis.dataBadan << "/";
         cout << temp -> zapis.rodzPrep << endl;
         temp = temp -> nastepny;
@@ -62,7 +62,7 @@ void wyswietlCalosc(intNode * obiekt){
 }
 
 void pierwszeSlowa(){
-    cout << "Witaj w bazie danych laboratorium SCP, jak? operacje chcesz przeprowadzic? Wpisz cyfre:" << endl;
+    cout << "Witaj w bazie danych laboratorium SCP, jaka operacje chcesz przeprowadzic? Wpisz cyfre i nacisnij enter:" << endl;
     cout << "1 - Dodaj probke do bazy danych." << endl;
     cout << "2 - Usun probke z dazy danych." << endl;
     cout << "3 - Zmien dane probki." << endl;
@@ -73,39 +73,57 @@ void pierwszeSlowa(){
     cout << "8 - Wyjdz z programu" << endl;
 }
 
-void usun(intNode * obiekt, int nr){
-    if(nr == 0)
-    {
-        intNode * temp = obiekt -> pierwszy;
-        obiekt -> pierwszy = temp -> nastepny;
-        delete temp;
+void usun(intNode * obiekt){
+    if(obiekt -> nastepny == nullptr && obiekt -> pierwszy == nullptr) {
+        cout << "Brak elementow do usuniecia";
+        cout.flush();
+        sleep(2);
+        wyczyscEkran();
     }
-    else if(nr >= 1)
+    else
     {
-        int j = 0;
-        intNode * temp = obiekt -> pierwszy;
-        while(temp -> nastepny)
+        int nr;
+        cout << "Ktory rejestr z listy chcesz usunac?" << endl;
+        cin >> nr;
+        nr -= 1;
+        wyczyscEkran();
+        if (nr == 0)
         {
-            j++;
-            if(j == nr) break;
-            temp = temp -> nastepny;
+            intNode *temp = obiekt->pierwszy;
+            obiekt->pierwszy = temp->nastepny;
+            delete temp;
         }
-        if(nr > j)
-        {
-        cout << "Nie ma takiego elementu w liscie";
+        else if (nr >= 1) {
+            int j = 0;
+            intNode *temp = obiekt->pierwszy;
+            while (temp->nastepny)
+            {
+                j++;
+                if (j == nr) break;
+                temp = temp->nastepny;
+            }
+            if (nr > j)
+            {
+                wyczyscEkran();
+                cout << "Nie ma takiego elementu w liscie";
+                cout.flush();
+                sleep(2);
+                wyczyscEkran();
+            }
+            else
+            {
+                cout << "Usuwanie rejestru..." << endl;
+                cout.flush();
+                sleep(2);
+            }
+            if (temp->nastepny = nullptr)
+            {
+                delete temp->nastepny;
+                temp->nastepny = nullptr;
+            }
         }
-        else
-        {
-            cout << "Usuwanie rejestru..." << endl;
-        }
-        if (temp -> nastepny = nullptr)
-        {
-           delete temp -> nastepny;
-           temp -> nastepny = nullptr;
-        }
+
     }
-
-
 }
 
 bool checkTable(intNode * rekord, char searchTable[256])
@@ -180,7 +198,7 @@ void dodaj(intNode * obiekt){
     cout << endl << "Wprowadz date badan preparatu" << endl;
     cin >> b;
     nowy -> zapis.dataBadan = b;
-    cout << endl << "Wybierz rodzaj preparatu poprzez wybranie odpowiedniego numru:" << endl << "1 - staly" << endl << "2 - rozproszony" << endl << "3 - lotny";
+    cout << endl << "Wybierz rodzaj preparatu poprzez wybranie odpowiedniego numru:" << endl << "1 - staly" << endl << "2 - rozproszony" << endl << "3 - lotny" << endl;
     int k;
     cin >> k;
     tu:
@@ -235,6 +253,7 @@ void wyswietlJeden(intNode * temp)
     cout << temp -> zapis.rodzPrep << endl;
     cout.flush();
     sleep(4);
+    wyczyscEkran();
 }
 
 void update(intNode * mainStruct)
@@ -242,6 +261,7 @@ void update(intNode * mainStruct)
     int probkaNumer;
     cout << "Podaj numer probki, ktorej parametr chcesz zmodyfikowac." << endl;
     cin >> probkaNumer;
+    wyczyscEkran();
     intNode * temp;
     temp = mainStruct -> pierwszy;
     for (int f = probkaNumer; f != 1; f--)
@@ -249,7 +269,7 @@ void update(intNode * mainStruct)
         temp = temp -> nastepny;
     }
     cout << "Ktory parametr probki chcesz zmienic?";
-    cout << "Kliknij:" << endl << "1 - aby zmienic indeks"
+    cout << "Kliknij:" << endl << "1 - aby zmienic indeks" << endl
     << "2 - aby zmienic nazwe" << endl
     << "3 - aby zmienic stezenie" << endl
     << "4 - aby zmienic objetosc" << endl
@@ -259,6 +279,7 @@ void update(intNode * mainStruct)
     << "8 - aby zmienic rodzaj preparatu" << endl;
     int choice;
     cin >> choice;
+    wyczyscEkran();
     cout << endl << "Wprowadz nowa wartosc:" << endl;
     float a;
     string c;
@@ -300,6 +321,7 @@ void update(intNode * mainStruct)
             break;
     }
     cout << endl;
+    wyczyscEkran();
     wyswietlCalosc(mainStruct);
     wyczyscEkran();
 }
@@ -346,9 +368,13 @@ void zapisDanych(intNode * obiekt)
         {
             baza << temp -> zapis.wlasciciel[s];
         }
-        baza << temp -> zapis.dataPobrania << "/";
+        baza << "/" << temp -> zapis.dataPobrania << "/";
         baza << temp -> zapis.dataBadan << "/";
-        baza << temp -> zapis.rodzPrep << endl; // zeby nie dodawal nowe linii w ostatnim rekordzie
+        baza << temp -> zapis.rodzPrep; // zeby nie dodawal nowe linii w ostatnim rekordzie
+        if(temp -> nastepny != nullptr)
+        {
+            baza << endl;
+        }
         temp = temp -> nastepny;
     }
     baza.close();
@@ -396,6 +422,27 @@ void loadDatabase(intNode * obiekt) {
             nowy->nastepny = nullptr;
         }
     }
+    baza.close();
+    wyczyscEkran();
+    cout << "Wczytywanie bazy danych";
+    cout.flush();
+    sleep(1);
+    wyczyscEkran();
+    cout << "Wczytywanie bazy danych.";
+    cout.flush();
+    sleep(1);
+    wyczyscEkran();
+    cout << "Wczytywanie bazy danych..";
+    cout.flush();
+    sleep(1);
+    wyczyscEkran();
+    cout << "Wczytywanie bazy danych...";
+    cout.flush();
+    sleep(1);
+    wyczyscEkran();
+    cout << "Baza Danych wczytana poprawnie!";
+    cout.flush();
+    sleep(3);
 }
 
 
@@ -406,8 +453,8 @@ int main() {
     lista = new intNode;
     lista -> nastepny = nullptr;
     lista -> pierwszy = nullptr;
-    int wybor;
-    while(wybor != 7)
+    int wybor = 10;
+    while(wybor)
     {
         pierwszeSlowa();
         cin >> wybor;
@@ -422,30 +469,38 @@ int main() {
                 break;
             case 2:
                 wyczyscEkran();
-                int input;
-                cout << "Ktory rejestr z listy chcesz usunac?" << endl;
-                cin >> input;
-                usun(lista, input - 1);
+                usun(lista);
                 break;
             case 3:
                 wyczyscEkran();
                 update(lista);
                 break;
             case 4:
+                wyczyscEkran();
                 wyswietlJeden(wyszukaj(lista));
                 break;
             case 5:
+                wyczyscEkran();
                 zapisDanych(lista);
                 wyczyscEkran();
                 break;
             case 6:
+                wyczyscEkran();
                 loadDatabase(lista);
                 break;
             case 7:
+                wyczyscEkran();
                 wyswietlCalosc(lista);
+                wyczyscEkran();
                 break;
             case 8:
                 return 0;
+            default:
+                wyczyscEkran();
+                cout << "Wprowadziles nieprawidlowa wartosc, sproboj ponownie!" << endl;
+                cout.flush();
+                sleep(2);
+                wyczyscEkran();
         }
     }
 }
