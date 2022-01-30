@@ -136,19 +136,17 @@ bool checkTable(intNode * rekord, char searchTable[256])
     else
     {
         for (int m = 0; m < 256 && rekord->zapis.nazwa[m] != 0; m++) {
-            if (rekord->zapis.nazwa[m] != searchTable[m] && rekord->nastepny == nullptr) {
+            if (rekord->zapis.nazwa[m] != searchTable[m]) {
                 foundVar = false;
                 break;
-            } else if (rekord->zapis.nazwa[m] != searchTable[m]) {
-                rekord = rekord->nastepny;
-                m = -1;
             }
         }
         return foundVar;
     }
 }
 
-void dodaj(intNode * obiekt){
+void dodaj(intNode * obiekt)
+{
     intNode * nowy = new intNode;
     float a;
     char checkValidityTable[256];
@@ -237,23 +235,24 @@ void dodaj(intNode * obiekt){
 
 void wyswietlJeden(intNode * temp)
 {
-    cout << temp -> zapis.indeks << "/";
-    for(int g = 0; temp -> zapis.nazwa[g]; g++)
-    {
-        cout << temp -> zapis.nazwa[g];
+    if(temp != nullptr) {
+        cout << temp->zapis.indeks << "/";
+        for (int g = 0; temp->zapis.nazwa[g]; g++) {
+            cout << temp->zapis.nazwa[g];
+        }
+        cout << "/" << temp->zapis.stezenie << "/";
+        cout << temp->zapis.objetosc << "/";
+        for (int s = 0; temp->zapis.wlasciciel[s]; s++) {
+            cout << temp->zapis.wlasciciel[s];
+        }
+        cout << "/" << temp->zapis.dataPobrania << "/";
+        cout << temp->zapis.dataBadan << "/";
+        cout << temp->zapis.rodzPrep << endl;
+        cout.flush();
+        sleep(4);
+        wyczyscEkran();
     }
-    cout << "/" << temp -> zapis.stezenie << "/";
-    cout << temp -> zapis.objetosc << "/";
-    for(int s = 0; temp -> zapis.wlasciciel[s]; s++)
-    {
-        cout << temp -> zapis.wlasciciel[s];
-    }
-    cout << temp -> zapis.dataPobrania << "/";
-    cout << temp -> zapis.dataBadan << "/";
-    cout << temp -> zapis.rodzPrep << endl;
-    cout.flush();
-    sleep(4);
-    wyczyscEkran();
+    else;
 }
 
 void update(intNode * mainStruct)
@@ -337,16 +336,36 @@ intNode * wyszukaj(intNode * mainStruct)
     getline(cin, search);
     strcpy(searchTable, search.c_str());
     intNode * temp = mainStruct -> pierwszy;
-    bool foundVar = checkTable(temp, searchTable);
-    if (!foundVar)
+    bool foundVar;
+    while(temp && mainStruct -> pierwszy != nullptr)
     {
-        cout << "Nie znaleziono probki o podanej nazwie" << endl;
-        return nullptr;
+        foundVar = checkTable(temp, searchTable);
+        if(foundVar)
+        {
+            wyczyscEkran();
+            cout << "Znaleziono probke o podanej nazwie: " << endl;
+            return temp;
+        }
+        if (temp -> nastepny == nullptr)
+        {
+            wyczyscEkran();
+            cout << "Nie znaleziono probki o podanej nazwie" << endl;
+            cout.flush();
+            sleep(2);
+            return nullptr;
+        }
+        else
+        {
+            temp = temp -> nastepny;
+        }
+
     }
-    else
+    if(mainStruct -> pierwszy == nullptr)
     {
-        cout << "Znaleziono nastepujaca probke o podanej nazwie: " << endl;
-        return temp;
+        wyczyscEkran();
+        cout << "Brak próbek w programie" << endl;
+        cout.flush();
+        sleep(2);
     }
 }
 
