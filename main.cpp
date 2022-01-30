@@ -93,7 +93,8 @@ void usun(intNode * obiekt){
             obiekt->pierwszy = temp->nastepny;
             delete temp;
         }
-        else if (nr >= 1) {
+        else if (nr >= 1)
+        {
             int j = 0;
             intNode *temp = obiekt->pierwszy;
             while (temp->nastepny)
@@ -255,74 +256,81 @@ void wyswietlJeden(intNode * temp)
     else;
 }
 
-void update(intNode * mainStruct)
-{
-    int probkaNumer;
-    cout << "Podaj numer probki, ktorej parametr chcesz zmodyfikowac." << endl;
-    cin >> probkaNumer;
-    wyczyscEkran();
-    intNode * temp;
-    temp = mainStruct -> pierwszy;
-    for (int f = probkaNumer; f != 1; f--)
+void update(intNode * mainStruct) {
+    if (mainStruct->pierwszy == nullptr && mainStruct->nastepny == nullptr)
     {
-        temp = temp -> nastepny;
+        cout << "Brak elementów do zaktualizowania" << endl;
+        cout.flush();
+        sleep(2);
+        wyczyscEkran();
     }
-    cout << "Ktory parametr probki chcesz zmienic?";
-    cout << "Kliknij:" << endl << "1 - aby zmienic indeks" << endl
-    << "2 - aby zmienic nazwe" << endl
-    << "3 - aby zmienic stezenie" << endl
-    << "4 - aby zmienic objetosc" << endl
-    << "5 - aby zmienic wlasciciela" << endl
-    << "6 - aby zmienic date pobrania" << endl
-    << "7 - aby zmienic date badan" << endl
-    << "8 - aby zmienic rodzaj preparatu" << endl;
-    int choice;
-    cin >> choice;
-    wyczyscEkran();
-    cout << endl << "Wprowadz nowa wartosc:" << endl;
-    float a;
-    string c;
-    switch(choice)
+    else
     {
-        case 1:
-            cin >> a;
-            temp -> zapis.indeks = a;
-            break;
-        case 2:
-            cin.ignore();
-            getline(cin, c);
-            strcpy(temp -> zapis.nazwa, c.c_str());
-            break;
-        case 3:
-            cin >> a;
-            temp -> zapis.stezenie = a;
-            break;
-        case 4:
-            cin >> a;
-            temp -> zapis.objetosc = a;
-            break;
-        case 5:
-            cin.ignore();
-            getline(cin, c);
-            strcpy(temp -> zapis.wlasciciel, c.c_str());
-            break;
-        case 6:
-            cin >> c;
-            temp -> zapis.dataPobrania = c;
-            break;
-        case 7:
-            cin >> c;
-            temp -> zapis.dataBadan = c;
-            break;
-        case 8:
-            cin >> c;
-            temp -> zapis.rodzPrep = c;
-            break;
+        int probkaNumer;
+        cout << "Podaj numer probki, ktorej parametr chcesz zmodyfikowac." << endl;
+        cin >> probkaNumer;
+        wyczyscEkran();
+        intNode *temp;
+        temp = mainStruct->pierwszy;
+        for (int f = probkaNumer; f != 1; f--) {
+            temp = temp->nastepny;
+        }
+        cout << "Ktory parametr probki chcesz zmienic?";
+        cout << "Kliknij:" << endl << "1 - aby zmienic indeks" << endl
+             << "2 - aby zmienic nazwe" << endl
+             << "3 - aby zmienic stezenie" << endl
+             << "4 - aby zmienic objetosc" << endl
+             << "5 - aby zmienic wlasciciela" << endl
+             << "6 - aby zmienic date pobrania" << endl
+             << "7 - aby zmienic date badan" << endl
+             << "8 - aby zmienic rodzaj preparatu" << endl;
+        int choice;
+        cin >> choice;
+        wyczyscEkran();
+        cout << endl << "Wprowadz nowa wartosc:" << endl;
+        float a;
+        string c;
+        switch (choice) {
+            case 1:
+                cin >> a;
+                temp->zapis.indeks = a;
+                break;
+            case 2:
+                cin.ignore();
+                getline(cin, c);
+                strcpy(temp->zapis.nazwa, c.c_str());
+                break;
+            case 3:
+                cin >> a;
+                temp->zapis.stezenie = a;
+                break;
+            case 4:
+                cin >> a;
+                temp->zapis.objetosc = a;
+                break;
+            case 5:
+                cin.ignore();
+                getline(cin, c);
+                strcpy(temp->zapis.wlasciciel, c.c_str());
+                break;
+            case 6:
+                cin >> c;
+                temp->zapis.dataPobrania = c;
+                break;
+            case 7:
+                cin >> c;
+                temp->zapis.dataBadan = c;
+                break;
+            case 8:
+                cin >> c;
+                temp->zapis.rodzPrep = c;
+                break;
+        }
+        cout << endl;
+        wyczyscEkran();
+        wyswietlCalosc(mainStruct);
+        wyczyscEkran();
     }
-    cout << endl;
-    wyczyscEkran();
-    wyswietlCalosc(mainStruct);
-    wyczyscEkran();
 }
 
 
@@ -366,6 +374,8 @@ intNode * wyszukaj(intNode * mainStruct)
         cout << "Brak próbek w programie" << endl;
         cout.flush();
         sleep(2);
+        wyczyscEkran();
+        return nullptr;
     }
 }
 
