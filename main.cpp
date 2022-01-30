@@ -73,59 +73,55 @@ void pierwszeSlowa(){
     cout << "8 - Wyjdz z programu" << endl;
 }
 
-void usun(intNode * obiekt){
-    if(obiekt -> nastepny == nullptr && obiekt -> pierwszy == nullptr) {
-        cout << "Brak elementow do usuniecia";
-        cout.flush();
-        sleep(2);
-        wyczyscEkran();
+void usunElement(intNode * lista)
+{
+    int nr;
+    cout << "Ktory rejestr z listy chcesz usunac?" << endl;
+    cin >> nr;
+    nr -= 1;
+    wyczyscEkran();
+    if (nr == 0)
+    {
+        intNode *temp = lista->pierwszy;
+        lista->pierwszy = temp->nastepny;
+        delete temp;
     }
     else
     {
-        int nr;
-        cout << "Ktory rejestr z listy chcesz usunac?" << endl;
-        cin >> nr;
-        nr -= 1;
-        wyczyscEkran();
-        if (nr == 0)
+        int j = 1;
+        intNode * prev = lista -> pierwszy;
+        intNode * current = lista -> pierwszy -> nastepny;
+        while(current != nullptr)
         {
-            intNode *temp = obiekt->pierwszy;
-            obiekt->pierwszy = temp->nastepny;
-            delete temp;
-        }
-        else if (nr >= 1)
-        {
-            int j = 0;
-            intNode *temp = obiekt->pierwszy;
-            while (temp->nastepny)
+            if(nr == j)
             {
-                j++;
-                if (j == nr) break;
-                temp = temp->nastepny;
-            }
-            if (nr > j)
-            {
-                wyczyscEkran();
-                cout << "Nie ma takiego elementu w liscie";
-                cout.flush();
-                sleep(2);
-                wyczyscEkran();
+                break;
             }
             else
             {
-                cout << "Usuwanie rejestru..." << endl;
-                cout.flush();
-                sleep(2);
-            }
-            if (temp->nastepny = nullptr)
-            {
-                delete temp->nastepny;
-                temp->nastepny = nullptr;
+                prev = current;
+                current = current->nastepny;
+                j++;
             }
         }
-
+        if(current == nullptr)
+        {
+            cout << "Nie można usunac, brak takiego elementu.\n";
+            cout.flush();
+            sleep(2);
+        }
+        else
+        {
+            cout << "Usuwam...\n";
+            prev->nastepny = current->nastepny;
+            delete current;
+            cout.flush();
+            sleep(2);
+        }
     }
+
 }
+
 
 bool checkTable(intNode * rekord, char searchTable[256])
 {
@@ -498,7 +494,7 @@ int main() {
                 break;
             case 2:
                 wyczyscEkran();
-                usun(lista);
+                usunElement(lista);
                 break;
             case 3:
                 wyczyscEkran();
